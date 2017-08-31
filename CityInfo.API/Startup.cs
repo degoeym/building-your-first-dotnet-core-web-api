@@ -46,12 +46,13 @@ namespace CityInfo.API
 
             services.AddTransient<IMailService, LocalMailService>();
 
-            var connectionString = Startup.Configuration["connectionStrings:cityInfoDBConnectionString"];
+            var connectionString = Configuration["connectionStrings:cityInfoDBConnectionString"];
             services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, 
+            ILoggerFactory loggerFactory, CityInfoContext cityInfoContext)
         {
             //loggerFactory.AddConsole();
             //loggerFactory.AddDebug();
@@ -66,6 +67,7 @@ namespace CityInfo.API
                 app.UseExceptionHandler();
             }
 
+            cityInfoContext.EnsureSeedDataForContext();
             app.UseStatusCodePages();
             app.UseMvc();
         }
